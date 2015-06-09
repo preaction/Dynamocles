@@ -1,9 +1,8 @@
 package Dynamocles;
-# ABSTRACT: Write a sentence about what it does
+# ABSTRACT: Dynamic content management system
 
 use strict;
 use warnings;
-
 
 
 1;
