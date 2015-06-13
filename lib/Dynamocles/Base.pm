@@ -12,7 +12,7 @@ our @IMPORT_MODULES = (
 
 our %IMPORT_BUNDLES = (
     Test => [
-        qw( Test::More Test::Mojo ),
+        qw( Test::More Test::Mojo Test::Lib ),
     ],
     App => [
         'Dynamocles::App',
