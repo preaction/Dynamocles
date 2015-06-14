@@ -1,9 +1,14 @@
 package Dynamocles::Site;
 # ABSTRACT: A collection of Dynamocles application
 
-use Mojo::Base 'Mojolicious';
+use Dynamocles::Base 'Class';
+extends 'Mojolicious';
 
-has apps => sub { {} };
+has apps => (
+    is => 'ro',
+    isa => HashRef[InstanceOf['Dynamocles::App']],
+    default => sub { {} },
+);
 
 sub startup {
     my ( $self ) = @_;
