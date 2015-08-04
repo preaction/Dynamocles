@@ -10,12 +10,18 @@ has apps => (
     default => sub { {} },
 );
 
+has pg => (
+    is => 'ro',
+    isa => InstanceOf['Mojo::Pg'],
+);
+
 sub startup {
     my ( $self ) = @_;
 
     # Mount apps
     for my $app_name ( keys %{ $self->apps } ) {
         my $app = $self->apps->{ $app_name };
+        $app->site( $self );
         $self->routes->any( $app->base_url )->detour( $app );
     }
 }
