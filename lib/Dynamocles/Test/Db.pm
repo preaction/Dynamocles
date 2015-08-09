@@ -1,6 +1,24 @@
 package Dynamocles::Test::Db;
 # ABSTRACT: Create and run a postgres instance for a test database
 
+=head1 SYNOPSIS
+
+    my $test_db = Dynamocles::Test::Db->new;
+    $test_db->start;
+
+    my $pg = Mojo::Pg->new( $test_db->connect_url );
+
+=head1 DESCRIPTION
+
+This module will create a blank Postgres environment and launch a Postgres
+server for testing purposes. Once L<the start method|/start> returns, you can
+connect to the database, create necessary tables, and run your tests.
+
+Multiple instances of this object should work fine: The database will not bind
+to any TCP ports.
+
+=cut
+
 use Dynamocles::Base 'Class';
 use Mojo::Util qw( url_escape );
 use Path::Tiny;
@@ -171,19 +189,3 @@ sub DEMOLISH {
 }
 
 1;
-
-=head1 SYNOPSIS
-
-    my $test_db = Dynamocles::Test::Db->new;
-    $test_db->start;
-
-    my $pg = Mojo::Pg->new( $test_db->connect_url );
-
-=head1 DESCRIPTION
-
-This module will create a blank Postgres environment and launch a Postgres
-server for testing purposes. Once L<the start method|/start> returns, you can
-connect to the database, create necessary tables, and run your tests.
-
-Multiple instances of this object should work fine: The database will not bind
-to any TCP ports.

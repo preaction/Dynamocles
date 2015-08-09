@@ -1,6 +1,12 @@
 package Dynamocles::Site;
 # ABSTRACT: A collection of Dynamocles application
 
+=head1 SYNOPSIS
+
+=head1 DESCRIPTION
+
+=cut
+
 use Dynamocles::Base 'Class';
 extends 'Mojolicious';
 
@@ -28,9 +34,4 @@ sub startup {
 
 1;
 __END__
-
-=head1 SYNOPSIS
-
-=head1 DESCRIPTION
-
 
