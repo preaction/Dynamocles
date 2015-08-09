@@ -9,34 +9,13 @@ my $app = Dynamocles::App::Comment->new(
 );
 
 plan skip_all => 'No test without postgres installed'
-    unless `postgres --version`;
+    unless Dynamocles::Test::Db->postgres_version;
 
-use File::Temp ();
-use Mojo::Util qw( url_escape );
-my $data_dir = File::Temp->newdir;
-my $sock_dir = File::Temp->newdir;
-
-# initdb -D data
-system( "initdb -D $data_dir" );
-
-# postgres -D data -k $sock_dir
-say "postgres -D $data_dir -k $sock_dir -c listen_addresses=''";
-my $db_pid = fork;
-if ( $db_pid ) {
-    sleep 3;
-}
-else {
-    exec( "postgres -D $data_dir -k $sock_dir -c listen_addresses=''" );
-    exit $?;
-}
-
-# createdb test
-system( "createdb -h $sock_dir test" );
-
-# dropdb test
+my $test_db = Dynamocles::Test::Db->new;
+$test_db->start;
 
 my $site = Dynamocles::Site->new(
-    pg => Mojo::Pg->new( 'postgresql://' . url_escape( $sock_dir ) . '/test' ),
+    pg => Mojo::Pg->new( $test_db->connect_url ),
     apps => { comment => $app },
 );
 
@@ -140,6 +119,3 @@ subtest 'basic comments' => sub {
 };
 
 done_testing;
-
-kill 'INT', $db_pid;
-

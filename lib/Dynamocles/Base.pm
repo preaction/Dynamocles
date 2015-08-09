@@ -22,6 +22,7 @@ our %IMPORT_BUNDLES = (
 
     Test => [
         qw( Test::More Test::Mojo Test::Lib ),
+        'Dynamocles::Test::Db',
     ],
 
     App => [
