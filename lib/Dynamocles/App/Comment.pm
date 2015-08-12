@@ -5,6 +5,7 @@ use Dynamocles::Base 'App';
 use Time::Piece;
 use Text::Markdown;
 use Mojo::DOM;
+use Mojo::Util qw( xml_escape );
 
 =attr markdown
 
@@ -117,14 +118,15 @@ sub startup {
 
     my $html = $app->parse_markdown( $markdown )
 
-Parse the Markdown in the given comment. Uses the L</markdown> object, and additionally
-protects from spam.
+Parse the Markdown in the given comment. Uses the L</markdown> object, and
+additionally protects from spam by adding C<rel="nofollow"> and XSS by escaping
+all HTML tags.
 
 =cut
 
 sub parse_markdown {
     my ( $self, $markdown ) = @_;
-    my $dom = Mojo::DOM->new( $self->markdown->markdown( $markdown ) );
+    my $dom = Mojo::DOM->new( $self->markdown->markdown( xml_escape $markdown ) );
     $dom->find( 'a' )->each( sub { $_->attr( rel => 'nofollow' ) } );
     return "$dom";
 }
