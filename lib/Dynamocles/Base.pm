@@ -21,8 +21,9 @@ our %IMPORT_BUNDLES = (
     ],
 
     Test => [
-        qw( Test::More Test::Mojo Test::Lib ),
+        qw( Test::More Test::Mojo Test::Lib Test::Deep ),
         'Dynamocles::Test::Db',
+        'Test::Mojo::WithRoles' => [qw( TestDeep )],
     ],
 
     App => [

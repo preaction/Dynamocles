@@ -4,15 +4,15 @@ use Mojo::Pg;
 use Dynamocles::Site;
 use Dynamocles::App::Comment;
 
-my $app = Dynamocles::App::Comment->new(
-    base_url => '/',
-);
-
 plan skip_all => 'No test without postgres installed'
     unless Dynamocles::Test::Db->postgres_version;
 
 my $test_db = Dynamocles::Test::Db->new;
 $test_db->start;
+
+my $app = Dynamocles::App::Comment->new(
+    base_url => '/',
+);
 
 my $site = Dynamocles::Site->new(
     pg => Mojo::Pg->new( $test_db->connect_url ),
