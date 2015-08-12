@@ -3,6 +3,23 @@ package Dynamocles::App::Comment;
 
 use Dynamocles::Base 'App';
 use Time::Piece;
+use Text::Markdown;
+use Mojo::DOM;
+
+=attr markdown
+
+The Text::Markdown object to use to turn Markdown into HTML. Defaults to a
+plain L<Text::Markdown> object.
+
+Any object with a "markdown" method will work here.
+
+=cut
+
+has markdown => (
+    is => 'ro',
+    isa => HasMethods['markdown'],
+    default => sub { Text::Markdown->new },
+);
 
 =method install
 
@@ -57,11 +74,16 @@ sub startup {
     $r->get( '/*page_path' )->to( cb => sub {
         my ( $c ) = @_;
         my $db = $c->app->site->pg->db;
+        my $md = $c->app->markdown;
 
         $db->query( 'SELECT * FROM comment WHERE page_path=?', $c->stash( 'page_path' ),
             sub {
                 my ( $db, $err, $results ) = @_;
-                $c->render( json => [ $results->hashes->each ] );
+                my @results = $results->hashes->each;
+                for my $r ( @results ) {
+                    $r->{content} = $self->parse_markdown( $r->{content} );
+                }
+                $c->render( json => \@results );
             }
         );
     } );
@@ -69,6 +91,7 @@ sub startup {
     $r->post( '/*page_path' )->to( cb => sub {
         my ( $c ) = @_;
         my $db = $c->app->site->pg->db;
+        my $md = $c->app->markdown;
         my $post = $c->req->json;
 
         $post->{page_path} = $c->stash( 'page_path' );
@@ -82,11 +105,28 @@ sub startup {
         $db->query( 'INSERT INTO comment (' . $fields . ') VALUES (' . $places . ')', @values,
             sub {
                 my ( $db, $err, $results ) = @_;
+                $post->{content} = $self->parse_markdown( $post->{content} );
                 $c->render( json => $post );
             }
         );
 
     } );
+}
+
+=method parse_markdown
+
+    my $html = $app->parse_markdown( $markdown )
+
+Parse the Markdown in the given comment. Uses the L</markdown> object, and additionally
+protects from spam.
+
+=cut
+
+sub parse_markdown {
+    my ( $self, $markdown ) = @_;
+    my $dom = Mojo::DOM->new( $self->markdown->markdown( $markdown ) );
+    $dom->find( 'a' )->each( sub { $_->attr( rel => 'nofollow' ) } );
+    return "$dom";
 }
 
 1;

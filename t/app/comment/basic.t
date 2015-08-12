@@ -41,6 +41,7 @@ subtest 'basic comments' => sub {
 
         my $expect = {
             %$comment,
+            content => "<p>$comment->{content}</p>\n",
             page_path => 'blog/page/1',
             date => re( qr(\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}) ),
         };
@@ -66,6 +67,7 @@ subtest 'basic comments' => sub {
 
         my $expect2 = {
             %$comment2,
+            content => "<p>$comment2->{content}</p>\n",
             page_path => 'blog/page/1',
             date => re( qr(\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}) ),
         };
@@ -99,6 +101,7 @@ subtest 'basic comments' => sub {
 
         my $expect = {
             %$comment,
+            content => "<p>$comment->{content}</p>\n",
             page_path => 'pod/Dynamocles.html',
             date => re( qr(\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}) ),
         };
