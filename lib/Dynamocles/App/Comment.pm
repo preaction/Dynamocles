@@ -4,6 +4,7 @@ package Dynamocles::App::Comment;
 use Dynamocles::Base 'App';
 use Time::Piece;
 use Text::Markdown;
+use File::Share qw( dist_dir );
 use Mojo::DOM;
 use Mojo::Util qw( xml_escape );
 
@@ -71,7 +72,15 @@ everything ready to serve requests.
 sub startup {
     my ( $self ) = @_;
 
+    my $s = Mojolicious::Static->new(
+        paths => [ dist_dir( 'Dynamocles' ) . '/app/comment' ],
+    );
+
     my $r = $self->routes;
+    $r->get( '/script.js' )->to( cb => sub {
+        $s->dispatch( shift );
+    } );
+
     $r->get( '/*page_path' )->to( cb => sub {
         my ( $c ) = @_;
         my $db = $c->app->site->pg->db;
