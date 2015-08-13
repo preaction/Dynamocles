@@ -8,6 +8,7 @@ use base 'Import::Base';
 our @IMPORT_MODULES = (
     qw( strict warnings ),
     feature => [qw( :5.10 )],
+    'Dynamocles',
 );
 
 my @class_modules = (
